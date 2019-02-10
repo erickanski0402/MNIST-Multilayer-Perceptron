@@ -3,9 +3,9 @@
 #   Hidden Layer 1 (H1): 16 nodes, each receiving input from all 784 input nodes
 #   Hidden Layer 2 (H2): 16 nodes, each receiving input from all 16 H1 nodes
 #   Outputs (0): 10 nodes (for each possible digit label)
-#
 
 import MNIST_Dataset as mnist
+import numpy as np
 
 # Loads the full 42,000 rows of test data
 rawData = mnist.load_mnist();
@@ -13,3 +13,8 @@ rawData = mnist.load_mnist();
 targets = mnist.get_targets(rawData);
 # Gets the rest of the data as a 42000x784 matrix
 data = mnist.get_data(rawData);
+
+
+weights_input_h1 = np.random.rand(16,784)
+weights_h1_h2 = np.random.rand(16,16)
+weights_h2_output = np.random(10,16)

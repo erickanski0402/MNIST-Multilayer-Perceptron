@@ -1,11 +1,11 @@
 import csv
+import numpy as np
 
-rawData = [];
+def load_mnist():
+    return np.loadtxt(open('C:/Users/erick/Desktop/train.csv', 'rb'), delimiter = ',', skiprows = 1)
 
-with open('C:/Users/erick/Desktop/train.csv') as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter = ',')
-    line_count = 0
-    for row in csv_reader:
-        rawData.append(row);
+def get_targets(rawData):
+    return rawData[:,0]
 
-print(rawData)
+def get_data(rawData):
+    return rawData[:,1:]

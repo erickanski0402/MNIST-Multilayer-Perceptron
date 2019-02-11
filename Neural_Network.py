@@ -4,35 +4,53 @@
 #   Hidden Layer 2 (H2): 16 nodes, each receiving input from all 16 H1 nodes
 #   Outputs (0): 10 nodes (for each possible digit label)
 
+
+class Neural_Network:
+    def __init__(self):
+        # Initialize each layer with random weights (values between 0-1)
+        self.weights_input_h1 = np.random.rand(16,784)
+        self.weights_h1_h2 = np.random.rand(16,16)
+        self.weights_h2_output = np.random.rand(10,16)
+
+    # Sigmoid activation function (for feed forward algorithm)
+    def sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
+
+    # Derivative of sigmoid function (for backpropogation)
+    def d_sigmoid(self, z):
+        return self.sigmoid(z) * (1 - self.sigmoid(z))
+
+    def feed_forward(self, training_example):
+        # Initial inputs fed into first layer of nodes and activated
+        # (Input->Hidden_1)
+        output_input_h1 = self.sigmoid(np.dot(self.weights_input_h1, training_example))
+
+        # Inputs from Input->Hidden_1 fed into second layer of nodes and activated
+        # (Hidden_1->Hidden_2)
+        output_h1_h2 = self.sigmoid(np.dot(self.weights_h1_h2, output_input_h1))
+
+        # Inputs from Hidden_1->Hidden_2 fed into third and final layer of nodes and
+        # activated (Hidden_2->Output)
+        output_h2_output = self.sigmoid(np.dot(self.weights_h2_output, output_h1_h2))
+
+        # Returns the index of which output the network 'believes' the training
+        # example represents. (indices: 0-9 for digits: 0-9)
+        return np.argmax(output_h2_output)
+
+
+    def backpropogation(self, training_examples, training_targets):
+
+
+
+
 import MNIST_Dataset as mnist
 import numpy as np
 
 
 # Initialize each layer with random weights (values between 0-1)
-weights_input_h1 = np.random.rand(16,784)
-weights_h1_h2 = np.random.rand(16,16)
-weights_h2_output = np.random.rand(10,16)
-
-
-def sigmoid(z):
-    return 1 / (1 + np.exp(-z))
-
-def feed_forward(training_example):
-    # Initial inputs fed into first layer of nodes and activated
-    # (Input->Hidden_1)
-    output_input_h1 = sigmoid(np.dot(weights_input_h1, training_example))
-
-    # Inputs from Input->Hidden_1 fed into second layer of nodes and activated
-    # (Hidden_1->Hidden_2)
-    output_h1_h2 = sigmoid(np.dot(weights_h1_h2, output_input_h1))
-
-    # Inputs from Hidden_1->Hidden_2 fed into third and final layer of nodes and
-    # activated (Hidden_2->Output)
-    output_h2_output = sigmoid(np.dot(weights_h2_output, output_h1_h2))
-
-    # Returns the index of which output the network 'believes' the training
-    # example represents. (indices: 0-9 for digits: 0-9)
-    return np.argmax(output_h2_output)
+# weights_input_h1 = np.random.rand(16,784)
+# weights_h1_h2 = np.random.rand(16,16)
+# weights_h2_output = np.random.rand(10,16)
 
 
 # Loads the full 42,000 rows of test data
@@ -44,24 +62,11 @@ data = mnist.get_data(rawData);
 
 
 # Smaller training set
-trainingData = data[:10]
-trainingTargets = targets[:10]
+trainingData = data[:100]
+trainingTargets = targets[:100]
 
 
-# # Feed forward
-# # Initial inputs fed into first layer of nodes and activated (Input->Hidden_1)
-# output_input_h1 = sigmoid(np.dot(weights_input_h1, trainingData))
-#
-# # Inputs from Input->Hidden_1 fed into second layer of nodes and activated
-# # (Hidden_1->Hidden_2)
-# output_h1_h2 = sigmoid(np.dot(weights_h1_h2, output_input_h1))
-#
-# # Inputs from Hidden_1->Hidden_2 fed into third and final layer of nodes and
-# # activated (Hidden_2->Output)
-# output_h2_output = sigmoid(np.dot(weights_h2_output, output_h1_h2))
-# print("Actual Digit: ", trainingTargets)
-# print("Guessed Digit: ", np.argmax(output_h2_output))
-
+nn = Neural_Network()
 
 for i in range(trainingData.shape[0]):
-    print("Actual Value:", trainingTargets[i], "    Guess value: ", feed_forward(trainingData[i]))
+    print("Actual Value:", trainingTargets[i], "    Guess value: ", nn.feed_forward(trainingData[i]))

@@ -6,11 +6,14 @@
 
 
 class Neural_Network:
-    def __init__(self):
+    def __init__(self, alpha):
         # Initialize each layer with random weights (values between 0-1)
         self.weights_input_h1 = np.random.rand(16,784)
         self.weights_h1_h2 = np.random.rand(16,16)
         self.weights_h2_output = np.random.rand(10,16)
+
+        # Learning rate is passed in and set
+        self.lr = alpha
 
     # Sigmoid activation function (for feed forward algorithm)
     def sigmoid(self, z):
@@ -66,7 +69,7 @@ trainingData = data[:100]
 trainingTargets = targets[:100]
 
 
-nn = Neural_Network()
+nn = Neural_Network(0.1)
 
 for i in range(trainingData.shape[0]):
     print("Actual Value:", trainingTargets[i], "    Guess value: ", nn.feed_forward(trainingData[i]))

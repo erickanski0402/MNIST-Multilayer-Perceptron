@@ -23,6 +23,13 @@ class Neural_Network:
     def d_sigmoid(self, z):
         return self.sigmoid(z) * (1 - self.sigmoid(z))
 
+    def avgCost(self, guesses, targets):
+        costs = []
+        for i in range(len(guesses)):
+            # print("(" + int(guesses[i]) + " - " + int(targets[i]) + ")^2")
+            costs.append((guesses[i] - targets[i]) ** 2)
+        return sum(costs) / len(costs)
+
     def feed_forward(self, training_example):
         # Initial inputs fed into first layer of nodes and activated
         # (Input->Hidden_1)
@@ -42,7 +49,7 @@ class Neural_Network:
 
 
     def backpropogation(self, training_examples, training_targets):
-
+        return None
 
 
 
@@ -65,11 +72,14 @@ data = mnist.get_data(rawData);
 
 
 # Smaller training set
-trainingData = data[:100]
-trainingTargets = targets[:100]
+trainingData = data[:10]
+trainingTargets = targets[:10]
 
 
 nn = Neural_Network(0.1)
-
+guesses = []
 for i in range(trainingData.shape[0]):
+    guesses.append(nn.feed_forward(trainingData[i]))
     print("Actual Value:", trainingTargets[i], "    Guess value: ", nn.feed_forward(trainingData[i]))
+
+print(nn.avgCost(guesses,trainingTargets))

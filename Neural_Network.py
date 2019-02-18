@@ -3,11 +3,13 @@
 #   Hidden Layer 1 (H1): 16 nodes, each receiving input from all 784 input nodes
 #   Hidden Layer 2 (H2): 16 nodes, each receiving input from all 16 H1 nodes
 #   Outputs (0): 10 nodes (for each possible digit label)
-
+import MNIST_Dataset as mnist
+import numpy as np
 
 class Neural_Network:
     def __init__(self, alpha):
         # Initialize each layer with random weights (values between 0-1)
+        # Adding in a weight for the bias aswell
         self.weights_input_h1 = np.random.rand(16,784)
         self.weights_h1_h2 = np.random.rand(16,16)
         self.weights_h2_output = np.random.rand(10,16)
@@ -27,7 +29,7 @@ class Neural_Network:
         costs = []
         for i in range(len(guesses)):
             # print("(" + int(guesses[i]) + " - " + int(targets[i]) + ")^2")
-            costs.append((guesses[i] - targets[i]) ** 2)
+            costs.append(((guesses[i] - targets[i]) ** 2) / 2)
         return sum(costs) / len(costs)
 
     def feed_forward(self, training_example):
@@ -49,18 +51,23 @@ class Neural_Network:
 
 
     def backpropogation(self, training_examples, training_targets):
+        # Initial inputs fed into first layer of nodes and activated
+        # (Input->Hidden_1)
+        for training_example in training_examples:
+            output_input_h1 = self.sigmoid(np.dot(self.weights_input_h1, training_example))
+
+            # Inputs from Input->Hidden_1 fed into second layer of nodes and activated
+            # (Hidden_1->Hidden_2)
+            output_h1_h2 = self.sigmoid(np.dot(self.weights_h1_h2, output_input_h1))
+
+            # Inputs from Hidden_1->Hidden_2 fed into third and final layer of nodes and
+            # activated (Hidden_2->Output)
+            output_h2_output = self.sigmoid(np.dot(self.weights_h2_output, output_h1_h2))
+
+            # print("Output between inputs and hidden 1:       \n", output_input_h1)
+            # print("Output between hidden 1 and hidden 2:     \n", output_h1_h2)
+            # print("Output between hidden 2 and final output: \n", output_h2_output, "\n")
         return None
-
-
-
-import MNIST_Dataset as mnist
-import numpy as np
-
-
-# Initialize each layer with random weights (values between 0-1)
-# weights_input_h1 = np.random.rand(16,784)
-# weights_h1_h2 = np.random.rand(16,16)
-# weights_h2_output = np.random.rand(10,16)
 
 
 # Loads the full 42,000 rows of test data
@@ -78,8 +85,11 @@ trainingTargets = targets[:10]
 
 nn = Neural_Network(0.1)
 guesses = []
+# For each entry (row) in the training set
 for i in range(trainingData.shape[0]):
+    # Add the guessed value
     guesses.append(nn.feed_forward(trainingData[i]))
     print("Actual Value:", trainingTargets[i], "    Guess value: ", nn.feed_forward(trainingData[i]))
 
-print(nn.avgCost(guesses,trainingTargets))
+print("Average cost of the final output: ", nn.avgCost(guesses,trainingTargets))
+nn.backpropogation(trainingData, trainingTargets)
